@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import AuthModal from "./AuthModal";
 
 const Header = () => {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  
   const navItems = [
     { label: "Features", href: "#features" },
     { label: "Why Viable?", href: "#why" },
@@ -34,10 +38,19 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* CTA Button */}
-        <Button variant="default" size="sm" className="hidden sm:flex">
-          Get Started
-        </Button>
+        {/* CTA Buttons */}
+        <div className="hidden sm:flex items-center gap-3">
+          <Button variant="default" size="sm">
+            Get Started
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setIsAuthModalOpen(true)}
+          >
+            Login
+          </Button>
+        </div>
 
         {/* Mobile Menu Button */}
         <Button variant="ghost" size="sm" className="md:hidden">
@@ -56,6 +69,12 @@ const Header = () => {
           </svg>
         </Button>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
     </header>
   );
 };
