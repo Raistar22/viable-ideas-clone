@@ -17,10 +17,10 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 210 11% 15%;
 
-    /* Financial brand green - professional and trustworthy */
-    --primary: 152 76% 36%;
+    /* New brand color - vibrant green #35AA00 */
+    --primary: 108 100% 33%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 152 76% 46%;
+    --primary-glow: 108 100% 43%;
 
     /* Sophisticated gray tones */
     --secondary: 210 17% 95%;
@@ -29,7 +29,7 @@ All colors MUST be HSL.
     --muted: 210 17% 95%;
     --muted-foreground: 210 10% 45%;
 
-    --accent: 152 76% 36%;
+    --accent: 108 100% 33%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -37,12 +37,12 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 152 76% 36%;
+    --ring: 108 100% 33%;
 
     --radius: 0.75rem;
 
-    /* Custom gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    /* Custom gradients with new brand color */
+    --gradient-primary: linear-gradient(135deg, hsl(108 100% 33%), hsl(108 100% 43%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 17% 98%));
 
     /* Shadows */
@@ -81,9 +81,9 @@ All colors MUST be HSL.
     --popover: 210 11% 8%;
     --popover-foreground: 210 17% 95%;
 
-    --primary: 152 76% 46%;
-    --primary-foreground: 210 11% 6%;
-    --primary-glow: 152 76% 56%;
+    --primary: 108 100% 43%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 108 100% 53%;
 
     --secondary: 210 11% 12%;
     --secondary-foreground: 210 17% 85%;
@@ -91,7 +91,7 @@ All colors MUST be HSL.
     --muted: 210 11% 12%;
     --muted-foreground: 210 10% 55%;
 
-    --accent: 152 76% 46%;
+    --accent: 108 100% 43%;
     --accent-foreground: 210 11% 6%;
 
     --destructive: 0 62.8% 50.6%;
@@ -99,7 +99,7 @@ All colors MUST be HSL.
 
     --border: 210 11% 15%;
     --input: 210 11% 15%;
-    --ring: 152 76% 46%;
+    --ring: 108 100% 43%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
