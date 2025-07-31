@@ -5,6 +5,7 @@ import Features from "@/components/Features";
 import WhyViable from "@/components/WhyViable";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <WhyViable />
       <CTA />
       <Footer />
+      <ThemeToggle />
     </div>
   );
 };
