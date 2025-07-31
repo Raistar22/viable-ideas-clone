@@ -9,27 +9,27 @@ All colors MUST be HSL.
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 210 11% 15%;
+    --foreground: 227 34% 16%; /* Changed from 210 11% 15% */
 
     --card: 0 0% 100%;
-    --card-foreground: 210 11% 15%;
+    --card-foreground: 227 34% 16%; /* Changed from 210 11% 15% */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 11% 15%;
+    --popover-foreground: 227 34% 16%; /* Changed from 210 11% 15% */
 
-    /* New brand color - vibrant green #35AA00 */
-    --primary: 108 100% 33%;
+    /* New brand color - vibrant green #35FAA0 */
+    --primary: 149 96% 48%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 108 100% 43%;
+    --primary-glow: 149 96% 58%;
 
     /* Sophisticated gray tones */
     --secondary: 210 17% 95%;
-    --secondary-foreground: 210 11% 15%;
+    --secondary-foreground: 227 34% 16%; /* Changed from 210 11% 15% */
 
     --muted: 210 17% 95%;
     --muted-foreground: 210 10% 45%;
 
-    --accent: 108 100% 33%;
+    --accent: 149 96% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -37,12 +37,12 @@ All colors MUST be HSL.
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 108 100% 33%;
+    --ring: 149 96% 48%;
 
     --radius: 0.75rem;
 
     /* Custom gradients with new brand color */
-    --gradient-primary: linear-gradient(135deg, hsl(108 100% 33%), hsl(108 100% 43%));
+    --gradient-primary: linear-gradient(135deg, hsl(149 96% 48%), hsl(149 96% 58%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 17% 98%));
 
     /* Shadows */
@@ -58,13 +58,13 @@ All colors MUST be HSL.
 
     --sidebar-foreground: 240 5.3% 26.1%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary: 227 34% 16%; /* Changed from 240 5.9% 10% */
 
     --sidebar-primary-foreground: 0 0% 98%;
 
     --sidebar-accent: 240 4.8% 95.9%;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-accent-foreground: 227 34% 16%; /* Changed from 240 5.9% 10% */
 
     --sidebar-border: 220 13% 91%;
 
@@ -73,36 +73,36 @@ All colors MUST be HSL.
 
   .dark {
     --background: 210 11% 6%;
-    --foreground: 210 17% 95%;
+    --foreground: 210 17% 95%; /* This should remain light for dark mode */
 
     --card: 210 11% 8%;
-    --card-foreground: 210 17% 95%;
+    --card-foreground: 210 17% 95%; /* This should remain light for dark mode */
 
     --popover: 210 11% 8%;
-    --popover-foreground: 210 17% 95%;
+    --popover-foreground: 210 17% 95%; /* This should remain light for dark mode */
 
-    --primary: 108 100% 43%;
+    --primary: 149 96% 58%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 108 100% 53%;
+    --primary-glow: 149 96% 68%;
 
     --secondary: 210 11% 12%;
-    --secondary-foreground: 210 17% 85%;
+    --secondary-foreground: 210 17% 85%; /* This should remain light for dark mode */
 
     --muted: 210 11% 12%;
     --muted-foreground: 210 10% 55%;
 
-    --accent: 108 100% 43%;
-    --accent-foreground: 210 11% 6%;
+    --accent: 149 96% 58%;
+    --accent-foreground: 210 11% 6%; /* This should remain dark for dark mode, so not changed to #1B2337 */
 
     --destructive: 0 62.8% 50.6%;
-    --destructive-foreground: 210 17% 95%;
+    --destructive-foreground: 210 17% 95%; /* This should remain light for dark mode */
 
     --border: 210 11% 15%;
     --input: 210 11% 15%;
-    --ring: 108 100% 43%;
-    --sidebar-background: 240 5.9% 10%;
+    --ring: 149 96% 58%;
+    --sidebar-background: 227 34% 16%; /* Changed from 240 5.9% 10% */
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary: 227 34% 16%; /* Changed from 224.3 76.3% 48% (which was a blueish color, but for dark mode sidebar primary it makes sense to be this new dark color) */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;

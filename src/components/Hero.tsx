@@ -8,7 +8,7 @@ const Hero = () => {
         {/* Main Headline */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
           We focus on your{" "}
-          <span className="text-primary">financial management</span> so you can
+          <span className="texprimaryt-">financial management</span> so you can
           think about the business
         </h1>
 
@@ -21,13 +21,19 @@ const Hero = () => {
         </p>
 
         {/* CTA Button */}
-        <Button 
-          size="lg" 
-          className="h-14 px-8 text-base font-semibold shadow-large hover:shadow-xl transition-all duration-300 group"
-        >
-          Book a free consultation today
-          <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-        </Button>
+       <Button 
+  size="lg"
+  className="relative overflow-hidden h-14 px-8 text-base font-semibold shadow-large group transition-all duration-300"
+>
+  <span className="relative z-10 flex items-center">
+    Book a free consultation today
+    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+  </span>
+
+  {/* Animated background on hover */}
+  <span className="absolute inset-0 z-0 bg-[hsl(210_40%_8%/0.1)] origin-right scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out" />
+</Button>
+
       </div>
 
       {/* Background Elements */}
