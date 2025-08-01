@@ -7,8 +7,8 @@ const Hero = () => {
       <div className="container max-w-4xl mx-auto text-center">
         {/* Main Headline */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
-          We focus on your{" "}
-          <span className="text-primary">financial management</span> so you can
+          We focus on your financial management
+           so you can
           think about the business
         </h1>
 
@@ -21,13 +21,27 @@ const Hero = () => {
         </p>
 
         {/* CTA Button */}
-        <Button 
-          size="lg" 
-          className="h-14 px-8 text-base font-semibold shadow-large hover:shadow-xl transition-all duration-300 group"
-        >
-          Book a free consultation today
-          <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-        </Button>
+      <Button 
+  size="lg"
+  className="relative h-14 px-10 min-w-[300px] text-base font-semibold overflow-hidden rounded-full bg-[#35faa0] text-[#1b2337] border border-[#1b2337] group transition-all duration-300 hover:bg-[#1b2337] hover:text-white"
+>
+  {/* Button Text Sliding Effect */}
+  <span className="relative block h-full w-full">
+    {/* Outgoing Text */}
+    <span className="absolute left-0 top-0 w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:-translate-y-full">
+      Book a free consultation today
+    </span>
+
+    {/* Incoming Text */}
+    <span className="absolute left-0 top-full w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:translate-y-[-100%]">
+      Book a free consultation today
+    </span>
+  </span>
+
+  {/* Sliding Arrow */}
+  <ArrowRight className="ml-3 h-5 w-5 absolute right-6 top-1/2 -translate-y-1/2 transition-transform duration-300 group-hover:translate-x-2 text-inherit" />
+</Button>
+
       </div>
 
       {/* Background Elements */}

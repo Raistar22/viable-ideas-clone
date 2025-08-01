@@ -44,10 +44,28 @@ const WhyViable = () => {
               ))}
             </div>
 
-            <Button size="lg" className="group">
-              Learn More About Our Approach
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Button 
+  size="lg" 
+  variant="secondary"
+  className="relative h-14 px-10 min-w-[280px] text-base font-semibold mb-16 overflow-hidden rounded-full bg-[#35faa0] text-[#1b2337] border border-[#1b2337] group shadow-lg hover:bg-[#1b2337] hover:text-white transition-all duration-300"
+>
+  {/* Sliding Text Wrapper */}
+  <span className="relative block h-full w-full pl-10 pr-12">
+    {/* Text that slides up */}
+    <span className="absolute top-0 left-0 w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:-translate-y-full">
+      Learn More About Our Approach
+    </span>
+
+    {/* Text that slides in from bottom */}
+    <span className="absolute top-full left-0 w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:translate-y-[-100%]">
+      Learn More About Our Approach
+    </span>
+  </span>
+
+  {/* Sliding Arrow */}
+  <ArrowRight className="h-5 w-5 absolute right-6 top-1/2 -translate-y-1/2 transition-transform duration-300 group-hover:translate-x-2 text-inherit" />
+</Button>
+
           </div>
 
           {/* Right Column - Stats Cards */}

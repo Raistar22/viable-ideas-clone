@@ -42,7 +42,8 @@ All colors MUST be HSL.
     --radius: 0.75rem;
 
     /* Custom gradients with new brand color */
-    --gradient-primary: linear-gradient(135deg, hsl(153 95% 59%), hsl(153 95% 69%));
+    --gradient-primary: linear-gradient(135deg, hsl(227, 34%, 16%), hsl(227, 34%, 16%));
+
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 17% 98%));
 
     /* Shadows */
@@ -72,7 +73,8 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 223 34% 16%;
+    --background: 227 34% 16%;
+
     --foreground: 210 17% 95%;
 
     --card: 223 34% 18%;
