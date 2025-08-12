@@ -28,8 +28,9 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
     if (isLogin) {
       // Dummy auth check
-      if (email === "admin" && password === "pass123") {
-        navigate("/entities");
+      if (email === "admin" && password === "1234") {
+        onClose();
+        navigate("/drive-dashboard");
       } else {
         alert("Invalid credentials");
       }

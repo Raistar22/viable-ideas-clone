@@ -23,26 +23,10 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 // App Views
 import NotFound from "./pages/NotFound";
-import EntitySelector from "./pages/EntitySelector";
-import DocumentCategories from "./pages/DocumentCategories";
-import EntityDashboard from "./pages/EntityDashboard";
+import DriveDashboard from "./pages/DriveDashboard";
+import DriveFolder from "./pages/DriveFolder";
 
 const queryClient = new QueryClient();
-
-// Wrapper to extract `:entity` param
-const DocumentCategoriesWrapper = () => {
-  const { entity } = useParams<{ entity: string }>();
-  return (
-    <>
-      <EntityDashboard entityId={entity} />
-      <DocumentCategories
-        entity={entity}
-        onSelectCategory={() => {}}
-        searchQuery=""
-      />
-    </>
-  );
-};
 
 // Landing Page Layout
 const LandingPage = () => {
@@ -69,9 +53,9 @@ function App() {
               {/* Public Landing Page */}
               <Route path="/" element={<LandingPage />} />
 
-              {/* Direct Access to Pages After Login */}
-              <Route path="/entities" element={<EntitySelector />} />
-              <Route path="/entities/:entity" element={<DocumentCategoriesWrapper />} />
+              {/* Drive Dashboard Routes */}
+              <Route path="/drive-dashboard" element={<DriveDashboard />} />
+              <Route path="/drive-folder" element={<DriveFolder />} />
 
               {/* Fallback */}
               <Route path="*" element={<NotFound />} />
