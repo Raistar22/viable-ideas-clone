@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Folder, FileText, Download, ExternalLink } from "lucide-react";
+import { ArrowLeft, Folder, FileText, Download, ExternalLink, RefreshCw, Pause, Play } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 interface DriveItem {
@@ -22,8 +22,13 @@ const DriveFolder = () => {
   const [currentItems, setCurrentItems] = useState<DriveItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastModified, setLastModified] = useState<string>('');
+  const [autoRefresh, setAutoRefresh] = useState(true);
   const title = searchParams.get('title') || 'Drive Folder';
   const driveUrl = searchParams.get('url') || '';
+
+  // Auto-refresh interval (check for changes every 5 seconds)
+  const REFRESH_INTERVAL = 5000;
 
   // Extract folder ID from Google Drive URL
   const extractFolderIdFromUrl = (url: string): string => {
@@ -39,14 +44,15 @@ const DriveFolder = () => {
     return extractFolderIdFromUrl(driveUrl);
   };
 
-  // Fetch folder contents from Google Drive API
-  const fetchFolderContents = async (folderId: string): Promise<DriveItem[]> => {
+  // Fetch folder contents from Google Drive API with change detection
+  const fetchFolderContents = async (folderId: string, checkForChanges: boolean = false): Promise<{ items: DriveItem[], hasChanges: boolean }> => {
     try {
       const response = await fetch(
         `https://www.googleapis.com/drive/v3/files?` +
-        `q='${folderId}'+in+parents` +
+        `q='${folderId}'+in+parents+and+trashed=false` +
         `&key=${GOOGLE_DRIVE_API_KEY}` +
-        `&fields=files(id,name,mimeType,webViewLink,parents)`
+        `&fields=files(id,name,mimeType,webViewLink,parents,modifiedTime)` +
+        `&orderBy=folder,name`
       );
 
       if (!response.ok) {
@@ -55,20 +61,35 @@ const DriveFolder = () => {
 
       const data = await response.json();
       
-      return data.files.map((file: any) => ({
+      const items = data.files.map((file: any) => ({
         id: file.id,
         name: file.name,
         mimeType: file.mimeType,
         type: file.mimeType === 'application/vnd.google-apps.folder' ? 'folder' : 'file',
         webViewLink: file.webViewLink,
-        parents: file.parents
+        parents: file.parents,
+        modifiedTime: file.modifiedTime
       }));
+
+      // Check if there are changes by comparing modification times
+      const latestModification = items.reduce((latest, item) => {
+        return item.modifiedTime > latest ? item.modifiedTime : latest;
+      }, '');
+
+      const hasChanges = checkForChanges && latestModification !== lastModified;
+      
+      if (!checkForChanges || hasChanges) {
+        setLastModified(latestModification);
+      }
+
+      return { items, hasChanges };
     } catch (err) {
       console.error('Error fetching folder contents:', err);
       throw err;
     }
   };
 
+  // Initial load of folder contents
   useEffect(() => {
     const loadFolderContents = async () => {
       setLoading(true);
@@ -80,7 +101,7 @@ const DriveFolder = () => {
           throw new Error('Invalid folder URL');
         }
         
-        const items = await fetchFolderContents(folderId);
+        const { items } = await fetchFolderContents(folderId, false);
         setCurrentItems(items);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load folder contents');
@@ -99,20 +120,6 @@ const DriveFolder = () => {
             mimeType: 'application/pdf',
             type: 'file',
             webViewLink: driveUrl
-          },
-          {
-            id: 'demo-3',
-            name: 'Images',
-            mimeType: 'application/vnd.google-apps.folder', 
-            type: 'folder',
-            webViewLink: driveUrl
-          },
-          {
-            id: 'demo-4',
-            name: 'Spreadsheet.xlsx',
-            mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            type: 'file',
-            webViewLink: driveUrl
           }
         ]);
       } finally {
@@ -123,13 +130,37 @@ const DriveFolder = () => {
     loadFolderContents();
   }, [currentPath, driveUrl]);
 
+  // Auto-refresh mechanism to detect changes
+  useEffect(() => {
+    if (!autoRefresh || error) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const folderId = getCurrentFolderId();
+        if (!folderId) return;
+
+        const { items, hasChanges } = await fetchFolderContents(folderId, true);
+        
+        if (hasChanges) {
+          setCurrentItems(items);
+          // Optional: Show a subtle notification that content was updated
+          console.log('Drive folder content updated');
+        }
+      } catch (err) {
+        console.error('Auto-refresh failed:', err);
+      }
+    }, REFRESH_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [currentPath, autoRefresh, error, lastModified]);
+
   const navigateToFolder = async (folder: DriveItem) => {
     if (folder.type === 'folder') {
       setCurrentPath([...currentPath, folder]);
       setLoading(true);
       
       try {
-        const items = await fetchFolderContents(folder.id);
+        const { items } = await fetchFolderContents(folder.id, false);
         setCurrentItems(items);
       } catch (err) {
         setError('Failed to load folder contents');
@@ -155,7 +186,7 @@ const DriveFolder = () => {
         const folderId = extractFolderIdFromUrl(driveUrl);
         setLoading(true);
         try {
-          const items = await fetchFolderContents(folderId);
+          const { items } = await fetchFolderContents(folderId, false);
           setCurrentItems(items);
         } catch (err) {
           setError('Failed to load folder contents');
@@ -167,7 +198,7 @@ const DriveFolder = () => {
         const parentFolder = newPath[newPath.length - 1];
         setLoading(true);
         try {
-          const items = await fetchFolderContents(parentFolder.id);
+          const { items } = await fetchFolderContents(parentFolder.id, false);
           setCurrentItems(items);
         } catch (err) {
           setError('Failed to load folder contents');
@@ -180,6 +211,20 @@ const DriveFolder = () => {
     }
   };
 
+  // Manual refresh function
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const folderId = getCurrentFolderId();
+      const { items } = await fetchFolderContents(folderId, false);
+      setCurrentItems(items);
+    } catch (err) {
+      setError('Failed to refresh folder contents');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getCurrentPathName = () => {
     if (currentPath.length === 0) return title;
     return currentPath.map(p => p.name).join(' / ');
@@ -188,22 +233,64 @@ const DriveFolder = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto p-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={navigateBack}
-            className="hover:bg-muted"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-2xl font-bold text-foreground">{getCurrentPathName()}</h1>
-          {error && (
-            <div className="ml-auto text-sm text-destructive bg-destructive/10 px-3 py-1 rounded">
-              API Key Required - Using Demo Data
-            </div>
-          )}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={navigateBack}
+              className="hover:bg-muted"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <h1 className="text-2xl font-bold text-foreground">{getCurrentPathName()}</h1>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setAutoRefresh(!autoRefresh)}
+              className="flex items-center gap-2"
+            >
+              {autoRefresh ? (
+                <>
+                  <Pause className="w-4 h-4" />
+                  Pause Sync
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4" />
+                  Resume Sync
+                </>
+              )}
+            </Button>
+            
+            {error && (
+              <div className="text-sm text-destructive bg-destructive/10 px-3 py-1 rounded">
+                API Key Required - Using Demo Data
+              </div>
+            )}
+            
+            {autoRefresh && !error && (
+              <div className="text-sm text-green-600 bg-green-100 dark:bg-green-900/20 px-3 py-1 rounded flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                Live Sync Active
+              </div>
+            )}
+          </div>
         </div>
 
         {loading ? (
