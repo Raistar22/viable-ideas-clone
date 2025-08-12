@@ -13,7 +13,7 @@ interface DriveItem {
   parents?: string[];
 }
 
-const GOOGLE_DRIVE_API_KEY = 'AIzaSyD8YourAPIKeyHere'; // You'll need to replace this with your actual API key
+const GOOGLE_DRIVE_API_KEY = 'AIzaSyDi84WofdRu_bMW1FodHt27JuT45TZARAs';
 
 const DriveFolder = () => {
   const navigate = useNavigate();
