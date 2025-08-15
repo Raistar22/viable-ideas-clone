@@ -10,6 +10,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AuthProvider } from "@/auth/AuthContext";
 
 // Landing Page Components
 import Header from "@/components/Header";
@@ -43,8 +45,10 @@ const LandingPage = () => {
   );
 };
 
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
+
 function App() {
-  return (
+  const appTree = (
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
@@ -74,6 +78,18 @@ function App() {
       </QueryClientProvider>
     </ThemeProvider>
   );
+
+  // Only include OAuth provider when a valid client ID is provided
+  if (GOOGLE_CLIENT_ID) {
+    return (
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <AuthProvider>{appTree}</AuthProvider>
+      </GoogleOAuthProvider>
+    );
+  }
+
+  // Fallback without OAuth
+  return appTree;
 }
 
 export default App;

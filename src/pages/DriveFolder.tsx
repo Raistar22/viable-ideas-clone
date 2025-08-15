@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Folder, FileText, Download, ExternalLink, RefreshCw, Pause, Play } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/auth/AuthContext";
 
 interface DriveItem {
   id: string;
@@ -13,10 +14,25 @@ interface DriveItem {
   parents?: string[];
 }
 
-const GOOGLE_DRIVE_API_KEY = 'AIzaSyDi84WofdRu_bMW1FodHt27JuT45TZARAs';
+const GOOGLE_DRIVE_API_KEY = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY as string | undefined;
+
+const buildDriveFilesUrl = (folderId: string, useKey: boolean): string => {
+  const params = new URLSearchParams();
+  params.set('q', `'${folderId}' in parents and trashed=false`);
+  params.set('fields', 'files(id,name,mimeType,webViewLink,parents,modifiedTime)');
+  params.set('orderBy', 'folder,name');
+  if (useKey) {
+    if (!GOOGLE_DRIVE_API_KEY) {
+      throw new Error('Missing Google Drive API key');
+    }
+    params.set('key', GOOGLE_DRIVE_API_KEY);
+  }
+  return `https://www.googleapis.com/drive/v3/files?${params.toString()}`;
+};
 
 const DriveFolder = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, accessToken, signIn, signOut } = useAuth();
   const [searchParams] = useSearchParams();
   const [currentPath, setCurrentPath] = useState<DriveItem[]>([]);
   const [currentItems, setCurrentItems] = useState<DriveItem[]>([]);
@@ -47,13 +63,11 @@ const DriveFolder = () => {
   // Fetch folder contents from Google Drive API with change detection
   const fetchFolderContents = async (folderId: string, checkForChanges: boolean = false): Promise<{ items: DriveItem[], hasChanges: boolean }> => {
     try {
-      const response = await fetch(
-        `https://www.googleapis.com/drive/v3/files?` +
-        `q='${folderId}'+in+parents+and+trashed=false` +
-        `&key=${GOOGLE_DRIVE_API_KEY}` +
-        `&fields=files(id,name,mimeType,webViewLink,parents,modifiedTime)` +
-        `&orderBy=folder,name`
-      );
+      const useKey = !isAuthenticated;
+      const url = buildDriveFilesUrl(folderId, useKey);
+      const response = await fetch(url, {
+        headers: isAuthenticated && accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+      });
 
       if (!response.ok) {
         throw new Error('Failed to fetch folder contents');
@@ -103,6 +117,7 @@ const DriveFolder = () => {
         
         const { items } = await fetchFolderContents(folderId, false);
         setCurrentItems(items);
+        setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load folder contents');
         // Fallback to demo data if API fails
@@ -162,6 +177,7 @@ const DriveFolder = () => {
       try {
         const { items } = await fetchFolderContents(folder.id, false);
         setCurrentItems(items);
+        setError(null);
       } catch (err) {
         setError('Failed to load folder contents');
       } finally {
@@ -188,6 +204,7 @@ const DriveFolder = () => {
         try {
           const { items } = await fetchFolderContents(folderId, false);
           setCurrentItems(items);
+          setError(null);
         } catch (err) {
           setError('Failed to load folder contents');
         } finally {
@@ -200,6 +217,7 @@ const DriveFolder = () => {
         try {
           const { items } = await fetchFolderContents(parentFolder.id, false);
           setCurrentItems(items);
+          setError(null);
         } catch (err) {
           setError('Failed to load folder contents');
         } finally {
@@ -218,6 +236,7 @@ const DriveFolder = () => {
       const folderId = getCurrentFolderId();
       const { items } = await fetchFolderContents(folderId, false);
       setCurrentItems(items);
+      setError(null);
     } catch (err) {
       setError('Failed to refresh folder contents');
     } finally {
@@ -259,6 +278,12 @@ const DriveFolder = () => {
               Refresh
             </Button>
             
+            {isAuthenticated ? (
+              <Button variant="outline" size="sm" onClick={signOut}>Sign out</Button>
+            ) : (
+              <Button variant="outline" size="sm" onClick={signIn}>Sign in with Google</Button>
+            )}
+
             <Button
               variant="outline"
               size="sm"
@@ -280,7 +305,7 @@ const DriveFolder = () => {
             
             {error && (
               <div className="text-sm text-destructive bg-destructive/10 px-3 py-1 rounded">
-                API Key Required - Using Demo Data
+                {GOOGLE_DRIVE_API_KEY ? 'Drive fetch failed - check API key restrictions or folder sharing' : 'API Key Required - Using Demo Data'}
               </div>
             )}
             
@@ -362,8 +387,12 @@ const DriveFolder = () => {
             <ol className="text-sm text-muted-foreground space-y-1 ml-4">
               <li>1. Go to Google Cloud Console</li>
               <li>2. Enable Google Drive API</li>
-              <li>3. Create an API key</li>
-              <li>4. Replace the API key in the code</li>
+              <li>3. Create an API key and restrict it to the Google Drive API</li>
+              <li>4. Add HTTP referrers: http://localhost:8080/* (and http://127.0.0.1:8080/* if needed)</li>
+              <li>5. Create a <code>.env.local</code> file in the project root and add:</li>
+              <li className="ml-2"><code>VITE_GOOGLE_DRIVE_API_KEY=your_key_here</code></li>
+              <li className="ml-2"><code>VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id</code></li>
+              <li>6. Restart the dev server</li>
             </ol>
             <Button 
               variant="outline" 
